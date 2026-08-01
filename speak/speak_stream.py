@@ -22,7 +22,7 @@ async def main() -> None:
     text = text.strip()
     if not text:
         sys.exit(2)
-    voice = sys.argv[2] if len(sys.argv) > 2 else "zh-TW-YunJheNeural"
+    voice = sys.argv[2] if len(sys.argv) > 2 else "zh-TW-HsiaoChenNeural"
 
     import edge_tts
 

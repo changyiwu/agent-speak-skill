@@ -25,15 +25,17 @@ description: 快速語音回覆技能。當使用者說「唸出來」「用語�
 ### 3. 生成＋播放
 
 ```powershell
-pwsh -NoProfile -File "<本技能資料夾>\speak.ps1" -File "<講稿暫存檔.txt>"
+pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -File "<講稿暫存檔.txt>"
 ```
 （`<本技能資料夾>`＝本 SKILL.md 所在目錄，即技能載入時顯示的 base directory）
 
 若目前 Agent 的命令工具支援背景執行，就在背景播放並同步撰寫文字回覆；不支援時使用前景執行，不要傳入不存在的背景參數。完成後刪除剛建立的講稿暫存檔。輸出若有 `first_audio_chunk_s`／`total_s`，可在文字回覆中簡短回報。
 
+若 Agent 沙箱找不到主機已安裝的 `pwsh`、Python、`edge-tts` 或播放器，取得使用者批准後改在主機使用者環境執行；不要因沙箱 PATH 或 WindowsApps 權限造成的假性缺少而重複安裝。
+
 其他選項：
 - 安裝後先用 `-Check` 做不播放聲音的環境檢查
-- 預設聲音 `zh-TW-YunJheNeural`（男）；女聲 `-Voice zh-TW-HsiaoChenNeural`
+- 預設聲音 `zh-TW-HsiaoChenNeural`（小陳女聲）；其他台灣中文可選 `zh-TW-HsiaoYuNeural`（小玉女聲）或 `zh-TW-YunJheNeural`（雲哲男聲）
 - 使用者說「存起來」→ 加 `-Out "<專案路徑>.mp3"`（走整檔模式並保留音檔）
 - 串流不產生檔案；整檔備援的暫存音檔會在播放後自動刪除；需要保留時才用 `-Out`
 

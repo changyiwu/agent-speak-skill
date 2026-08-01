@@ -1,14 +1,14 @@
 # speak.ps1 — 快速語音回覆（預設串流：邊生成邊播；備援整檔；再備援 SAPI）
 # 用法：
-#   pwsh speak.ps1 "要唸的文字"
-#   pwsh speak.ps1 -File 講稿.txt
-#   pwsh speak.ps1 "文字" -Voice zh-TW-HsiaoChenNeural
-#   pwsh speak.ps1 "文字" -Out "D:\專案\回覆.mp3"   # 指定 -Out 時走整檔模式並保留音檔
+#   pwsh -ExecutionPolicy Bypass -File speak.ps1 "要唸的文字"
+#   pwsh -ExecutionPolicy Bypass -File speak.ps1 -File 講稿.txt
+#   pwsh -ExecutionPolicy Bypass -File speak.ps1 "文字" -Voice zh-TW-HsiaoYuNeural
+#   pwsh -ExecutionPolicy Bypass -File speak.ps1 "文字" -Out "D:\專案\回覆.mp3"   # 指定 -Out 時走整檔模式並保留音檔
 param(
   [Parameter(Position = 0)][string]$Text,
   [string]$File,
   [ValidatePattern('^[A-Za-z0-9-]+$')]
-  [string]$Voice = "zh-TW-YunJheNeural",
+  [string]$Voice = "zh-TW-HsiaoChenNeural",
   [string]$Out,
   [switch]$NoStream,
   [switch]$Check

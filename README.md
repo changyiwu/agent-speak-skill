@@ -10,7 +10,7 @@ Voice-reply skill for AI agents (Claude Code / Codex / OpenCode / Antigravity) �
 - 🔑 **無獨立 API Key**：使用 `edge-tts` 連接 Microsoft Edge 的線上語音服務
 - 🪟 **行內無視窗**：ffplay/mpv 管道播放，不會跳出任何播放器視窗
 - 🛡️ **三層備援**：串流 → 整檔（WPF MediaPlayer／WMPlayer COM）→ 離線 Windows SAPI，斷網也出得了聲
-- 🗣️ 預設台灣中文男聲 `zh-TW-YunJheNeural`，一個參數換任何 Edge-TTS 聲音
+- 🗣️ 預設台灣中文小陳女聲 `zh-TW-HsiaoChenNeural`，一個參數換任何 Edge-TTS 聲音
 - 🤝 **四個 Agent 通用**：同一份技能資料夾，Claude Code、Codex、OpenCode、Antigravity 都能用
 
 ## 需求
@@ -23,11 +23,13 @@ Voice-reply skill for AI agents (Claude Code / Codex / OpenCode / Antigravity) �
 | ffmpeg（含 ffplay）或 mpv | 串流播放用；沒有也能動（自動退到整檔模式）。`winget install Gyan.FFmpeg` |
 
 PowerShell 7 是啟動本 Skill 的必要條件；Windows SAPI 只負責執行後的離線語音備援，不能取代 `pwsh`。
+命令使用單次行程的 `-ExecutionPolicy Bypass`，只略過這次 Skill 腳本的簽章限制，不修改使用者或系統的全域執行政策。
+Codex 等 Agent 的沙箱可能看不到 WindowsApps 或使用者層 PATH；若主機檢查已安裝、沙箱仍顯示缺少，應在取得批准後改用主機使用者環境執行，而不是重複安裝。
 
 安裝後可先做不播放聲音的環境檢查：
 
 ```powershell
-pwsh -NoProfile -File .\speak\speak.ps1 -Check
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -Check
 ```
 
 ## 安裝（可下載 ZIP，不一定要 git clone）
@@ -47,13 +49,13 @@ pwsh -NoProfile -File .\speak\speak.ps1 -Check
 
 ```powershell
 # 建議：從 UTF-8 文字檔安全讀取講稿
-pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt
 
 # 換聲音（任何 edge-tts 支援的 voice）
-pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt -Voice zh-TW-HsiaoChenNeural
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt -Voice zh-TW-HsiaoYuNeural
 
 # 保留音檔（走整檔模式）
-pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt -Out D:\out\reply.mp3
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt -Out D:\out\reply.mp3
 ```
 
 `-Text "固定文字"` 仍可供人工測試；Agent 處理任意使用者內容時應使用 `-File`，避免 shell 字元被誤解析。
@@ -87,7 +89,7 @@ pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt -Out D:\out\reply.mp3
 測試不會連網或播放聲音：
 
 ```powershell
-pwsh -NoProfile -File .\tests\test_speak.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\tests\test_speak.ps1
 python -m unittest .\tests\test_speak_stream.py
 ```
 

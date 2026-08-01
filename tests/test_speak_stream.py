@@ -46,11 +46,13 @@ class FakeProcess:
 
 def fake_edge_tts(chunks: list[dict[str, object]]) -> types.ModuleType:
     module = types.ModuleType("edge_tts")
+    module.last_voice = None
 
     class Communicate:
         def __init__(self, text: str, voice: str) -> None:
             self.text = text
             self.voice = voice
+            module.last_voice = voice
 
         async def stream(self):
             for chunk in chunks:
@@ -68,8 +70,9 @@ class SpeakStreamTests(unittest.TestCase):
         player_code: int = 0,
         fail_write: bool = False,
         player_present: bool = True,
-    ) -> tuple[int, str, str]:
+    ) -> tuple[int, str, str, str | None]:
         process = FakeProcess(return_code=player_code, fail_write=fail_write)
+        edge_module = fake_edge_tts(chunks)
         stdout = io.StringIO()
         stderr = io.StringIO()
 
@@ -79,7 +82,7 @@ class SpeakStreamTests(unittest.TestCase):
             return None
 
         with (
-            mock.patch.dict(sys.modules, {"edge_tts": fake_edge_tts(chunks)}),
+            mock.patch.dict(sys.modules, {"edge_tts": edge_module}),
             mock.patch("shutil.which", side_effect=which),
             mock.patch("subprocess.Popen", return_value=process),
             mock.patch.object(sys, "argv", [str(SCRIPT), "測試文字"]),
@@ -89,30 +92,36 @@ class SpeakStreamTests(unittest.TestCase):
             try:
                 runpy.run_path(str(SCRIPT), run_name="__main__")
             except SystemExit as exc:
-                return int(exc.code or 0), stdout.getvalue(), stderr.getvalue()
-        return 0, stdout.getvalue(), stderr.getvalue()
+                return (
+                    int(exc.code or 0),
+                    stdout.getvalue(),
+                    stderr.getvalue(),
+                    edge_module.last_voice,
+                )
+        return 0, stdout.getvalue(), stderr.getvalue(), edge_module.last_voice
 
     def test_success_reports_metrics(self) -> None:
-        code, stdout, _ = self.run_stream(
+        code, stdout, _, voice = self.run_stream(
             chunks=[{"type": "audio", "data": b"audio"}]
         )
         self.assertEqual(code, 0)
+        self.assertEqual(voice, "zh-TW-HsiaoChenNeural")
         self.assertIn("first_audio_chunk_s=", stdout)
         self.assertIn("total_s=", stdout)
 
     def test_missing_player_returns_three(self) -> None:
-        code, _, _ = self.run_stream(chunks=[], player_present=False)
+        code, _, _, _ = self.run_stream(chunks=[], player_present=False)
         self.assertEqual(code, 3)
 
     def test_broken_pipe_returns_four(self) -> None:
-        code, _, stderr = self.run_stream(
+        code, _, stderr, _ = self.run_stream(
             chunks=[{"type": "audio", "data": b"audio"}], fail_write=True
         )
         self.assertEqual(code, 4)
         self.assertIn("未正常完成", stderr)
 
     def test_nonzero_player_exit_returns_four(self) -> None:
-        code, _, _ = self.run_stream(
+        code, _, _, _ = self.run_stream(
             chunks=[{"type": "audio", "data": b"audio"}], player_code=1
         )
         self.assertEqual(code, 4)

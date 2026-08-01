@@ -18,6 +18,9 @@ if ($errors.Count -gt 0) {
 }
 
 $scriptBlock = [scriptblock]::Create($content)
+if ($content -notmatch '\[string\]\$Voice\s*=\s*"zh-TW-HsiaoChenNeural"') {
+  throw "PowerShell 預設聲音不是 zh-TW-HsiaoChenNeural"
+}
 $checkOutput = @(& $scriptBlock -Check)
 if (-not ($checkOutput -match '^STREAM_READY=')) { throw "缺少 STREAM_READY 檢查結果" }
 if (-not ($checkOutput -match '^FILE_READY=')) { throw "缺少 FILE_READY 檢查結果" }

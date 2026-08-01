@@ -16,7 +16,7 @@
 - [x] 階段一：完成安全傳參、跨 Agent 相容性、錯誤處理與暫存檔修正
 - [x] 階段二：通過 Skill validator、語法解析與隔離式失敗情境測試
 - [x] 階段三：完成 GitHub 與 Obsidian 初始化
-- [ ] 階段四：經使用者另行授權後，同步到四個 Agent 全域技能目錄並驗證 SHA-256
+- [x] 階段四：同步到四個 Agent 全域技能目錄，並完成逐檔 SHA-256、額外檔案與 UTF-8 BOM 驗證
 
 ## 資料夾結構
 
@@ -55,3 +55,12 @@ agent-speak-skill/
 - 本專案 GitHub repo 為公開；commit 前必須掃描敏感資料與不應公開的素材
 - 四個 Agent 的安裝來源固定為 `speak/`，安裝名稱由 frontmatter `name: speak` 決定
 - 同步前先確認 Git 來源可信；同步後逐一比對檔案清單、SHA-256 與 UTF-8 BOM
+
+## 全域技能同步狀態
+
+2026-08-01 已完成 `speak` 首次安裝；四份副本各 4 個檔案，與專案來源的相對檔案清單及 SHA-256 完全一致，沒有額外檔案，且 `SKILL.md` 均無 UTF-8 BOM。
+
+- Claude Code：`C:\Users\chang\.claude\skills\speak`
+- Codex：`C:\Users\chang\.agents\skills\speak`
+- OpenCode：`C:\Users\chang\.config\opencode\skills\speak`
+- Antigravity：`C:\Users\chang\.gemini\config\skills\speak`
