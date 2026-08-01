@@ -1,0 +1,96 @@
+# agent-speak-skill 🔊
+
+讓你的 AI Agent「用語音回答你」——使用 Edge-TTS 的串流語音回覆技能。
+
+Voice-reply skill for AI agents (Claude Code / Codex / OpenCode / Antigravity) — streams Edge-TTS audio through a local hidden player, with no separate Edge-TTS API key or window pop-ups.
+
+## 特色
+
+- ⚡ **串流播放**：音訊邊生成邊播，不必等整個音檔生完；延遲取決於網路與上游服務
+- 🔑 **無獨立 API Key**：使用 `edge-tts` 連接 Microsoft Edge 的線上語音服務
+- 🪟 **行內無視窗**：ffplay/mpv 管道播放，不會跳出任何播放器視窗
+- 🛡️ **三層備援**：串流 → 整檔（WPF MediaPlayer／WMPlayer COM）→ 離線 Windows SAPI，斷網也出得了聲
+- 🗣️ 預設台灣中文男聲 `zh-TW-YunJheNeural`，一個參數換任何 Edge-TTS 聲音
+- 🤝 **四個 Agent 通用**：同一份技能資料夾，Claude Code、Codex、OpenCode、Antigravity 都能用
+
+## 需求
+
+| 項目 | 說明 |
+|------|------|
+| Windows 10/11 | 播放備援用到 WPF／SAPI（核心生成跨平台，播放層目前為 Windows） |
+| PowerShell 7（pwsh） | `winget install Microsoft.PowerShell` |
+| Python 3.8+ ＋ edge-tts | `pip install edge-tts` |
+| ffmpeg（含 ffplay）或 mpv | 串流播放用；沒有也能動（自動退到整檔模式）。`winget install Gyan.FFmpeg` |
+
+PowerShell 7 是啟動本 Skill 的必要條件；Windows SAPI 只負責執行後的離線語音備援，不能取代 `pwsh`。
+
+安裝後可先做不播放聲音的環境檢查：
+
+```powershell
+pwsh -NoProfile -File .\speak\speak.ps1 -Check
+```
+
+## 安裝（可下載 ZIP，不一定要 git clone）
+
+把 `speak/` 資料夾整個複製到你所用工具的技能目錄：
+
+| Agent | 技能目錄 |
+|-------|---------|
+| Claude Code | `~/.claude/skills/speak/` |
+| Codex | `~/.agents/skills/speak/` |
+| Antigravity | `~/.gemini/config/skills/speak/` |
+| OpenCode | `~/.config/opencode/skills/speak/` |
+
+裝好後對你的 Agent 說：**「用語音回答我」**、「唸出來」、「唸給我聽」即可觸發。
+
+## 手動使用
+
+```powershell
+# 建議：從 UTF-8 文字檔安全讀取講稿
+pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt
+
+# 換聲音（任何 edge-tts 支援的 voice）
+pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt -Voice zh-TW-HsiaoChenNeural
+
+# 保留音檔（走整檔模式）
+pwsh -NoProfile -File .\speak\speak.ps1 -File .\講稿.txt -Out D:\out\reply.mp3
+```
+
+`-Text "固定文字"` 仍可供人工測試；Agent 處理任意使用者內容時應使用 `-File`，避免 shell 字元被誤解析。
+
+可用聲音清單：`edge-tts --list-voices`
+
+## 運作原理
+
+```
+文字講稿 ─→ edge-tts 線上服務 ─→ 音訊 chunk ─→ ffplay/mpv stdin（邊收邊播）
+                    │ 失敗時
+                    ├─→ 整檔 mp3 → WPF MediaPlayer／WMPlayer COM（無視窗）
+                    │ 再失敗（離線）
+                    └─→ Windows SAPI 本機合成（零依賴）
+```
+
+## 檔案
+
+- `speak/SKILL.md` — 技能說明（Agent 讀這份決定何時觸發、怎麼呼叫）
+- `speak/speak.ps1` — 主腳本（模式選擇＋備援鏈）
+- `speak/speak_stream.py` — Edge-TTS 串流播放器
+
+## 注意
+
+- `edge-tts` 使用 Microsoft Edge 的線上語音服務；上游介面、可用性與限流可能變動，必要時執行 `pip install -U edge-tts`
+- 本專案不保證免費額度、無限用量或服務 SLA；使用前請確認上游服務條款
+- 要商用等級 SLA 可評估 [Azure Speech](https://azure.microsoft.com/pricing/details/speech/)；免費層與價格以官方當期頁面為準
+
+## 測試
+
+測試不會連網或播放聲音：
+
+```powershell
+pwsh -NoProfile -File .\tests\test_speak.ps1
+python -m unittest .\tests\test_speak_stream.py
+```
+
+## License
+
+MIT © 2026 mathruffian-dot（小吳 Sense Bar）

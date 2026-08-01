@@ -1,0 +1,4 @@
+interface:
+  display_name: "語音回覆"
+  short_description: "用 Edge-TTS 產生台灣中文語音並在本機無視窗播放"
+  default_prompt: "使用 $speak 將這段精簡的繁體中文回覆唸出來。"
