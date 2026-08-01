@@ -15,7 +15,7 @@
 
 - [x] 階段一：完成安全傳參、跨 Agent 相容性、錯誤處理與暫存檔修正
 - [x] 階段二：通過 Skill validator、語法解析與隔離式失敗情境測試
-- [ ] 階段三：完成 GitHub 與 Obsidian 初始化
+- [x] 階段三：完成 GitHub 與 Obsidian 初始化
 - [ ] 階段四：經使用者另行授權後，同步到四個 Agent 全域技能目錄並驗證 SHA-256
 
 ## 資料夾結構
@@ -42,7 +42,7 @@ agent-speak-skill/
 | 層級 | 平台 | 位置 | 讀取時機 |
 |------|------|------|---------|
 | L1 | 本地（GDrive） | `agents.md`＋`handoff.md`＋`CLAUDE.md`（橋接） | 每個 session |
-| L2 | GitHub | 初始化完成後回填 | 指定時 |
+| L2 | GitHub | [changyiwu/agent-speak-skill](https://github.com/changyiwu/agent-speak-skill)（公開） | 指定時 |
 | L3 | Obsidian | `agent-speak-skill/專案工作流程.md` | 有需要時 |
 
 ## 工作約定
