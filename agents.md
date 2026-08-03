@@ -69,6 +69,10 @@ agent-speak-skill/
 - 本專案 GitHub repo 為公開；commit 前必須掃描敏感資料與不應公開的素材
 - 四個 Agent 的安裝來源固定為 `speak/`，安裝名稱由 frontmatter `name: speak` 決定
 - 同步前先確認 Git 來源可信；同步後逐一比對檔案清單、SHA-256 與 UTF-8 BOM
+- **`speak.ps1` 必須用 `pwsh` 執行**。它是 UTF-8 無 BOM，Windows PowerShell 5.1 會以 ANSI 解讀，中文變亂碼、引號被吃掉，在 **parse 階段就失敗**（`Unexpected token ')'`、`The string is missing the terminator`），連 `-Check` 都跑不到。**看到這種語法錯誤是用錯直譯器，不是腳本壞掉**
+- **`pwsh` 可能是 winget 的 MSIX 版**，解析到 `AppData\Local\Microsoft\WindowsApps\pwsh.exe`，`C:\Program Files\PowerShell` 並不存在。一般沙箱看不到 `WindowsApps`，會**誤報 pwsh 未安裝**——那是假性缺少，不要重裝，實體在 `C:\Program Files\WindowsApps\Microsoft.PowerShell_*`
+- **不要把使用者提供的講稿直接插入 shell 命令字串**，一律寫成 UTF-8 暫存文字檔再用 `-File` 傳入
+- winget 裝完會改 PATH，**同一個 shell session 要重新載入環境變數**才找得到 `pwsh`／`ffplay`
 
 ## 全域技能同步狀態
 
