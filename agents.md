@@ -17,6 +17,8 @@
 - [x] 階段二：通過 Skill validator、語法解析與隔離式失敗情境測試
 - [x] 階段三：完成 GitHub 與 Obsidian 初始化
 - [x] 階段四：同步到四個 Agent 全域技能目錄，並完成逐檔 SHA-256、額外檔案與 UTF-8 BOM 驗證
+- [x] 階段五：在 `SKILL.md` 明訂 PowerShell 7 為硬需求，並補齊當前電腦的本機語音依賴
+- [ ] 階段六：其餘電腦補齊語音依賴並跑 `-Check`，再各自跑 `sync-skills` 取得新版 `SKILL.md`
 
 ## 資料夾結構
 
@@ -29,7 +31,7 @@ agent-speak-skill/
 │   └── speak_stream.py    # Edge-TTS 串流播放器
 ├── tests/                 # 不連網、不播放聲音的隔離測試
 ├── agents.md              # 跨 Agent 專案藍圖
-├── handoff.md             # 跨工作階段交接
+├── handoff.md             # 跨工作階段交接（本機檔，git 不追蹤，靠 GDrive 同步）
 ├── CLAUDE.md              # Claude Code 橋接
 ├── .gitattributes         # 固定文字檔為 LF，避免跨電腦 hash 漂移
 ├── README.md              # 專案安裝與使用說明
@@ -58,9 +60,11 @@ agent-speak-skill/
 
 ## 全域技能同步狀態
 
-2026-08-01 已完成 `speak` 首次安裝；四份副本各 4 個檔案，與專案來源的相對檔案清單及 SHA-256 完全一致，沒有額外檔案，且 `SKILL.md` 均無 UTF-8 BOM。
+2026-08-03 重新同步（`SKILL.md` 新增「環境需求」）；四份副本各 4 個檔案，與專案來源的相對檔案清單及 SHA-256 完全一致，沒有額外檔案，且 `SKILL.md` 均無 UTF-8 BOM。
 
-- Claude Code：`C:\Users\chang\.claude\skills\speak`
-- Codex：`C:\Users\chang\.agents\skills\speak`
-- OpenCode：`C:\Users\chang\.config\opencode\skills\speak`
-- Antigravity：`C:\Users\chang\.gemini\config\skills\speak`
+- Claude Code：`~\.claude\skills\speak`
+- Codex：`~\.agents\skills\speak`
+- OpenCode：`~\.config\opencode\skills\speak`
+- Antigravity：`~\.gemini\config\skills\speak`
+
+四個安裝目錄與本機語音依賴**都不跨電腦同步**，每台要各自安裝依賴並跑 `sync-skills`。**哪台裝到什麼程度、副本是哪一版，記在 `handoff.md`**（本機檔，不進 repo）。跨機安裝清單在 `我的雲端硬碟\agents\.skill-install\<電腦名>.json`，同樣不在 repo 內。

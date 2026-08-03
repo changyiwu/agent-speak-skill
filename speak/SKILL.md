@@ -12,6 +12,18 @@ description: 快速語音回覆技能。當使用者說「唸出來」「用語�
 - 備援鏈：串流 → 整檔（MediaPlayer/WMPlayer COM）→ SAPI 離線；絕不 `Start-Process` 開播放器
 - 小吳或其他已克隆人聲**只在使用者明確指名且 `voice-cloner` 可用時**改走該技能；不可用時要先說明
 
+## 環境需求
+
+- **必須用 PowerShell 7（`pwsh`）執行，不可退回 Windows PowerShell 5.1（`powershell`）**：`speak.ps1` 是 UTF-8 無 BOM，5.1 會用系統 ANSI 編碼去解，中文字串變亂碼、引號被吃掉，整份腳本在 **parse 階段就失敗**（`Unexpected token ')'`、`The string is missing the terminator`），連 `-Check` 都跑不到。看到這類語法錯誤是用錯直譯器，不是腳本壞掉——先確認 `pwsh` 是否存在，沒有就請使用者安裝 PowerShell 7，不要改用 `powershell` 硬跑。
+- 串流模式另需 Python 3 ＋ `edge_tts` 模組 ＋ `ffplay` 或 `mpv`；整檔模式需 `edge-tts` CLI。兩條路都不通才退到 SAPI（可離線但機器感重）。
+- 換到新電腦第一次使用前，先跑一次不播放聲音的環境檢查：
+
+```powershell
+pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -Check
+```
+
+輸出三個旗標 `STREAM_READY`／`FILE_READY`／`SAPI_READY`；只有 `SAPI_READY=True` 代表 Edge-TTS 兩條路都斷，要先補依賴再用。
+
 ## 執行步驟
 
 ### 1. 撰寫講稿
@@ -34,7 +46,6 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -
 若 Agent 沙箱找不到主機已安裝的 `pwsh`、Python、`edge-tts` 或播放器，取得使用者批准後改在主機使用者環境執行；不要因沙箱 PATH 或 WindowsApps 權限造成的假性缺少而重複安裝。
 
 其他選項：
-- 安裝後先用 `-Check` 做不播放聲音的環境檢查
 - 預設聲音 `zh-TW-HsiaoChenNeural`（小陳女聲）；其他台灣中文可選 `zh-TW-HsiaoYuNeural`（小玉女聲）或 `zh-TW-YunJheNeural`（雲哲男聲）
 - 使用者說「存起來」→ 加 `-Out "<專案路徑>.mp3"`（走整檔模式並保留音檔）
 - 串流不產生檔案；整檔備援的暫存音檔會在播放後自動刪除；需要保留時才用 `-Out`

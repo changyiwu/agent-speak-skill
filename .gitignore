@@ -4,6 +4,8 @@ desktop.ini
 .env
 *.key
 credentials.*
+# 交接檔含電腦名等本機資訊，靠 GDrive 跨機同步，不進公開 repo
+handoff.md
 __pycache__/
 *.py[cod]
 *.mp3
