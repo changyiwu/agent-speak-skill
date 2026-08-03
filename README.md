@@ -95,4 +95,4 @@ python -m unittest .\tests\test_speak_stream.py
 
 ## License
 
-MIT © 2026 mathruffian-dot（小吳 Sense Bar）
+MIT © 2026 mathruffian-dot（Sense Bar）
