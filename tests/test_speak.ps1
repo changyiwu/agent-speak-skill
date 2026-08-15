@@ -24,7 +24,7 @@ if ($content -notmatch '\[string\]\$Voice\s*=\s*"zh-TW-HsiaoChenNeural"') {
 $checkOutput = @(& $scriptBlock -Check)
 if (-not ($checkOutput -match '^STREAM_READY=')) { throw "缺少 STREAM_READY 檢查結果" }
 if (-not ($checkOutput -match '^FILE_READY=')) { throw "缺少 FILE_READY 檢查結果" }
-if (-not ($checkOutput -match '^SAPI_READY=')) { throw "缺少 SAPI_READY 檢查結果" }
+if (-not ($checkOutput -match '^OFFLINE_READY=')) { throw "缺少 OFFLINE_READY 檢查結果" }
 
 $threw = $false
 try {

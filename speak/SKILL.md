@@ -9,20 +9,27 @@ description: 快速語音回覆技能。當使用者說「唸出來」「用語�
 把一段結論或摘要用自然的台灣中文語音唸出來，達成「使用者語音輸入 → Agent 語音回覆」的對話循環。
 
 - 生成＋播放：**預設串流**（Edge-TTS 邊生成邊播；ffplay/mpv 管道播放，無視窗）
-- 備援鏈：串流 → 整檔（MediaPlayer/WMPlayer COM）→ SAPI 離線；絕不 `Start-Process` 開播放器
+- 備援鏈：串流 → 整檔 → 作業系統內建語音；絕不 `Start-Process` 開播放器
+
+| 層 | Windows | macOS |
+|----|---------|-------|
+| 1. 串流 | Edge-TTS ＋ ffplay/mpv | 相同 |
+| 2. 整檔播放 | MediaPlayer → WMPlayer COM | `afplay`（系統內建） |
+| 3. 離線備援 | SAPI | `say`（系統內建；嗓音優先序 Meijia → Sinji → Tingting） |
 - 小吳或其他已克隆人聲**只在使用者明確指名且 `voice-cloner` 可用時**改走該技能；不可用時要先說明
 
 ## 環境需求
 
 - **必須用 PowerShell 7（`pwsh`）執行，不可退回 Windows PowerShell 5.1（`powershell`）**：`speak.ps1` 是 UTF-8 無 BOM，5.1 會用系統 ANSI 編碼去解，中文字串變亂碼、引號被吃掉，整份腳本在 **parse 階段就失敗**（`Unexpected token ')'`、`The string is missing the terminator`），連 `-Check` 都跑不到。看到這類語法錯誤是用錯直譯器，不是腳本壞掉——先確認 `pwsh` 是否存在，沒有就請使用者安裝 PowerShell 7，不要改用 `powershell` 硬跑。
-- 串流模式另需 Python 3 ＋ `edge_tts` 模組 ＋ `ffplay` 或 `mpv`；整檔模式需 `edge-tts` CLI。兩條路都不通才退到 SAPI（可離線但機器感重）。
+- **macOS**：先 `brew install --cask powershell`。第 2、3 層用的 `afplay` 與 `say` 都是系統內建，不必另外安裝。
+- 串流模式另需 Python 3 ＋ `edge_tts` 模組 ＋ `ffplay` 或 `mpv`；整檔模式需 `edge-tts` CLI。兩條路都不通才退到作業系統內建語音（可離線但機器感重）。
 - 換到新電腦第一次使用前，先跑一次不播放聲音的環境檢查：
 
 ```powershell
 pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -Check
 ```
 
-輸出三個旗標 `STREAM_READY`／`FILE_READY`／`SAPI_READY`；只有 `SAPI_READY=True` 代表 Edge-TTS 兩條路都斷，要先補依賴再用。
+輸出三個旗標 `STREAM_READY`／`FILE_READY`／`OFFLINE_READY`；只有 `OFFLINE_READY=True` 代表 Edge-TTS 兩條路都斷，要先補依賴再用。（`OFFLINE_READY` 在 Windows 量的是 SAPI、在 macOS 量的是 `say`。）
 
 ## 執行步驟
 
@@ -55,5 +62,5 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -
 
 ## 注意
 - 使用者句子含「小吳的聲音」「用○○的聲音」→ `voice-cloner` 可用時改用該技能；不可用時告知使用者
-- Edge-TTS 需要網路；離線時自動退到 Windows SAPI（機器感較重但可離線使用）
+- Edge-TTS 需要網路；離線時自動退到作業系統內建語音（Windows SAPI／macOS `say`，機器感較重但可離線使用）
 - 不要用 `Start-Process` 播放——會開外部程式視窗，使用者明確不要
