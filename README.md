@@ -29,7 +29,7 @@ Codex 等 Agent 的沙箱可能看不到 WindowsApps 或使用者層 PATH；若�
 安裝後可先做不播放聲音的環境檢查：
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -Check
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./speak/speak.ps1 -Check
 ```
 
 ## 安裝（可下載 ZIP，不一定要 git clone）
@@ -49,13 +49,13 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -Check
 
 ```powershell
 # 建議：從 UTF-8 文字檔安全讀取講稿
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./speak/speak.ps1 -File ./講稿.txt
 
 # 換聲音（任何 edge-tts 支援的 voice）
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt -Voice zh-TW-HsiaoYuNeural
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./speak/speak.ps1 -File ./講稿.txt -Voice zh-TW-HsiaoYuNeural
 
 # 保留音檔（走整檔模式）
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.txt -Out D:\out\reply.mp3
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./speak/speak.ps1 -File ./講稿.txt -Out ./out/reply.mp3
 ```
 
 `-Text "固定文字"` 仍可供人工測試；Agent 處理任意使用者內容時應使用 `-File`，避免 shell 字元被誤解析。
@@ -89,8 +89,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File .\speak\speak.ps1 -File .\講稿.t
 測試不會連網或播放聲音：
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\tests\test_speak.ps1
-python -m unittest .\tests\test_speak_stream.py
+pwsh -NoProfile -ExecutionPolicy Bypass -File ./tests/test_speak.ps1
+python -m unittest ./tests/test_speak_stream.py
 ```
 
 ## License

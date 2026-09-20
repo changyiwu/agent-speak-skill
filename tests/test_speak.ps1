@@ -3,7 +3,7 @@ param([string]$ProjectRoot)
 
 $ErrorActionPreference = "Stop"
 if (-not $ProjectRoot) { $ProjectRoot = Split-Path $PSScriptRoot -Parent }
-$scriptPath = Join-Path $ProjectRoot "speak\speak.ps1"
+$scriptPath = Join-Path $ProjectRoot "speak/speak.ps1"
 $content = Get-Content -LiteralPath $scriptPath -Raw -Encoding UTF8
 
 $tokens = $null

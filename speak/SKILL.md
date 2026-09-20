@@ -26,7 +26,7 @@ description: 快速語音回覆技能。當使用者說「唸出來」「用語�
 - 換到新電腦第一次使用前，先跑一次不播放聲音的環境檢查：
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -Check
+pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>/speak.ps1" -Check
 ```
 
 輸出三個旗標 `STREAM_READY`／`FILE_READY`／`OFFLINE_READY`；只有 `OFFLINE_READY=True` 代表 Edge-TTS 兩條路都斷，要先補依賴再用。（`OFFLINE_READY` 在 Windows 量的是 SAPI、在 macOS 量的是 `say`。）
@@ -44,7 +44,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -
 ### 3. 生成＋播放
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>\speak.ps1" -File "<講稿暫存檔.txt>"
+pwsh -NoProfile -ExecutionPolicy Bypass -File "<本技能資料夾>/speak.ps1" -File "<講稿暫存檔.txt>"
 ```
 （`<本技能資料夾>`＝本 SKILL.md 所在目錄，即技能載入時顯示的 base directory）
 
